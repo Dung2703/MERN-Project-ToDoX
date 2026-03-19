@@ -6,20 +6,20 @@ import { FilterType } from '@/lib/Data'
 
 
 
-const StatsAndFilter = ({ completedTasksCount = 0, activeTasksCount = 0, filter = 'all' }) => {
+const StatsAndFilter = ({ completedTasksCount = 0, activeTasksCount = 0, filter = 'all', setFilter }) => {
     return (
         <div className='flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'>
 
             <div className='flex gap-3'>
                 <Badge
                     variant="secondary"
-                    classname="bg-white/50 text-accent-foreground/80 border-info/20"
+                    className="bg-white/50 text-accent-foreground/80 border-info/20"
                 >
                     {activeTasksCount} {FilterType.active}
                 </Badge>
                 <Badge
                     variant="secondary"
-                    classname="bg-white/50 text-success-foreground/80 border-success/20"
+                    className="bg-white/50 text-success-foreground/80 border-success/20"
                 >
                     {completedTasksCount} {FilterType.completed}
                 </Badge>
@@ -32,8 +32,9 @@ const StatsAndFilter = ({ completedTasksCount = 0, activeTasksCount = 0, filter 
                         variant={filter === type ? 'gradient' : 'ghost'}
                         size="sm"
                         className="capitalize"
+                        onClick={() => setFilter(type)}
                     >
-                        <Filter classname='size-4' />
+                        <Filter className='size-4' />
                         {FilterType[type]}
                     </Button>
                 ))}

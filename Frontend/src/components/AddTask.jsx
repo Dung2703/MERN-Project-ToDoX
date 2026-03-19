@@ -13,7 +13,7 @@ const AddTask = () => {
                     placeholder="Enter task title"
                     className="h-12 text-base bg-slate-50 sm:flex-1 border-border/50 focus:border-border/50 focus:ring-20"
                 />
-                <Button variant="gradient" size="xl" classname="px-6">
+                <Button variant="gradient" size="xl" className="px-6">
                     <Plus className='size-5' />
                     Add
                 </Button>

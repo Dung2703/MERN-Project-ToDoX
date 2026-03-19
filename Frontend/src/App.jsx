@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound';
 function App() {
   return (
     <>
-      <Toaster />
+      <Toaster richColors />
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<HomePage />} />
