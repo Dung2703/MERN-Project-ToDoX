@@ -7,7 +7,7 @@ import TaskListPagination from '@/components/TaskListPagination'
 import DateTimeFilter from '@/components/DateTimeFilter'
 import Footer from '@/components/Footer'
 import { toast } from 'sonner'
-import axios from 'axios'
+import api from '@/lib/axious'
 
 const HomePage = () => {
 
@@ -23,7 +23,7 @@ const HomePage = () => {
 
     const fetchTasks = async () => {
         try {
-            const res = await axios.get("http://localhost:5001/api/task");
+            const res = await api.get("/task");
             setTaskBuffer(res.data.tasks);
             setActiveTaskCount(res.data.activeCount);
             setCompletedTaskCount(res.data.completedCount);
@@ -31,6 +31,10 @@ const HomePage = () => {
             console.error('Error fetching tasks:', error);
             toast.error('Failed to fetch tasks. Please try again later.');
         }
+    }
+
+    const handleTaskChange = () => {
+        fetchTasks();
     }
 
     const filteredTasks = taskBuffer.filter((task) => {
@@ -61,8 +65,8 @@ const HomePage = () => {
             <div className='container pt-8 mx-auto relative z-10'>
                 <div className='w-full max-w-2xl p-6 mx-auto space-y-6'>
                     <Header />
-                    <AddTask />
-                    <TaskList filteredTasks={filteredTasks} filter={filter} />
+                    <AddTask handleNewTaskAdded={handleTaskChange} />
+                    <TaskList filteredTasks={filteredTasks} filter={filter} handleTaskChange={handleTaskChange} />
                     <StatsAndFilter
                         filter={filter}
                         setFilter={setFilter}
