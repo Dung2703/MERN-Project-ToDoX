@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { Card } from './ui/card';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
@@ -10,7 +10,8 @@ import api from '@/lib/axious';
 
 
 const TaskCard = ({ task, index, handleTaskChange }) => {
-    let isEditing = false;
+    const [isEditing, setIsEditing] = useState(false);
+    const [updateTaskTitle, setUpdateTaskTitle] = useState(task.title || "");
 
     const deleteTask = async (taskId) => {
         try {
@@ -20,6 +21,43 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
         } catch (error) {
             console.error('Error deleting task:', error);
             toast.error('Failed to delete task. Please try again.');
+        }
+    }
+    const updateTask = async () => {
+        try {
+            setIsEditing(false);
+            await api.put(`/task/${task._id}`, { title: updateTaskTitle });
+            toast.success('Task updated successfully!');
+            handleTaskChange();
+        } catch (error) {
+            console.error('Error updating task:', error);
+            toast.error('Failed to update task. Please try again.');
+        }
+    }
+    const toggleTaskCompleteButton = async () => {
+        try {
+            if (task.status === "active") {
+                await api.put(`/task/${task._id}`, {
+                    status: "completed",
+                    completedAt: new Date().toISOString()
+                });
+                toast.success(`${task.title} finished successfully!`);
+            } else {
+                await api.put(`/task/${task._id}`, {
+                    status: "active",
+                    completedAt: null
+                });
+                toast.success(`${task.title} marked as active!`);
+            }
+            handleTaskChange();
+        } catch (error) {
+            console.error('Error updating task status:', error);
+            toast.error('Failed to update task status. Please try again.');
+        }
+    }
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            updateTask();
         }
     }
     return (
@@ -38,6 +76,7 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
                         task.status === "completed" ? "text-success hover:text-success/80" :
                             "text-muted-foreground hover:text-primary"
                     )}
+                    onClick={toggleTaskCompleteButton}
                 >
                     {task.status === "completed" ? (
                         <CheckCircle2 className='size-5' />
@@ -51,6 +90,13 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
                             placeholder='Edit task title'
                             className="flex-1 h-12 text-base border-border/50 focus:border-primary/50 focus:ring-primary/20"
                             type="text"
+                            value={updateTaskTitle}
+                            onChange={(event) => setUpdateTaskTitle(event.target.value)}
+                            onKeyPress={handleKeyPress}
+                            onBlur={() => {
+                                setIsEditing(false);
+                                setUpdateTaskTitle(task.title || "");
+                            }}
                         />
                     ) : (
                         <p className={cn(
@@ -81,7 +127,14 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
                 </div>
 
                 <div className="hidden gap-2 group-hover:inline-flex animate-slide-up">
-                    <Button variant='ghost' size='icon' className="flex-shrink-0 transition-colors size-8 text-muted-foreground hover:text-info">
+                    <Button
+                        onClick={() => {
+                            setIsEditing(true);
+                            setUpdateTaskTitle(task.title || "");
+                        }}
+                        variant='ghost'
+                        size='icon'
+                        className="flex-shrink-0 transition-colors size-8 text-muted-foreground hover:text-info">
                         <SquarePen className='size-4' />
                     </Button>
                     <Button
