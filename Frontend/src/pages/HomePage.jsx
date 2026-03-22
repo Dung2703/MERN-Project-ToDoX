@@ -8,7 +8,7 @@ import DateTimeFilter from '@/components/DateTimeFilter'
 import Footer from '@/components/Footer'
 import { toast } from 'sonner'
 import api from '@/lib/axious'
-import { visibleTaskLimit } from '@/lib/Data'
+import { visibleTaskLimit } from '@/lib/data'
 
 const HomePage = () => {
 
