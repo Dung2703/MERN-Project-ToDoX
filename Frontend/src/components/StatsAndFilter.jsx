@@ -2,7 +2,7 @@ import { Filter } from 'lucide-react'
 import React from 'react'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
-import { FilterType } from '@/lib/Data'
+import { FilterType } from '@/lib/data'
 
 
 
