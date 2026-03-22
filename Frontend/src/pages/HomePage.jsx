@@ -8,6 +8,7 @@ import DateTimeFilter from '@/components/DateTimeFilter'
 import Footer from '@/components/Footer'
 import { toast } from 'sonner'
 import api from '@/lib/axious'
+import { visibleTaskLimit } from '@/lib/Data'
 
 const HomePage = () => {
 
@@ -16,10 +17,16 @@ const HomePage = () => {
     const [completedTaskCount, setCompletedTaskCount] = useState(0);
     const [filter, setFilter] = useState('all');
     const [dateQuery, setDateQuery] = useState('today');
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         fetchTasks();
     }, [dateQuery]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [filter, dateQuery]);
+
 
 
     const fetchTasks = async () => {
@@ -38,6 +45,23 @@ const HomePage = () => {
         fetchTasks();
     }
 
+    const handleNext = () => {
+        if (page < totalPages) {
+            setPage((prev) => prev + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (page > 1) {
+            setPage((prev) => prev - 1);
+        }
+    };
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+    };
+
+
     const filteredTasks = taskBuffer.filter((task) => {
         switch (filter) {
             case 'active':
@@ -48,6 +72,20 @@ const HomePage = () => {
                 return true;
         }
     });
+
+    const visibleTasks = filteredTasks.slice((page - 1) * visibleTaskLimit,
+        page * visibleTaskLimit
+    );
+
+    if (visibleTasks.length === 0) {
+        handlePrev
+    }
+
+    const totalPages = Math.ceil(filteredTasks.length / visibleTaskLimit);
+
+
+
+
 
 
     return (
@@ -77,7 +115,13 @@ const HomePage = () => {
                     />
 
                     <div className='flex flex-col items-center justify-center gap-6 sm:flex-row'>
-                        <TaskListPagination />
+                        <TaskListPagination
+                            handleNext={handleNext}
+                            handlePrev={handlePrev}
+                            handlePageChange={handlePageChange}
+                            page={page}
+                            totalPages={totalPages}
+                        />
                         <DateTimeFilter dateQuery={dateQuery} setDateQuery={setDateQuery} />
                     </div>
                     <Footer
